@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="js/vue.js"></script>
+</head>
+<body>
+    <div class="container-fluid app">
+        <input type="text" v-on:input="message = $event.target.value" v-bind:value="message">
+        <input type="text" v-model="message">
+        <!-- На строке 13 показан пример того как работает строка 14 -->
+        <button class="btn btn-success" v-on:click="show">
+            Показать / Скрыть
+        </button>
+        <hr>
+        <div v-bind:title="titleIf" v-if="shows">
+            {{ message }}
+        </div>
+        <div v-bind:title="titleElse" v-else>
+            is hidden
+        </div>
+        <div v-bind:title="titleShow" v-show="shows">
+            {{ message }}
+        </div>
+    </div>
+    
+</body>
+<script>
+    const app = new Vue({
+        el: '.app',
+        data: {
+            message: 'qwe',
+            titleIf: 'С помощью "v-if" мы убираем эллемент из DOM',
+            titleShow: 'С помощью "v-show" мы скрываем эллемент - "display:none"',
+            titleElse: 'Работает в паре с "v-if" и срабатывает как обычный else у if, обязан стоять после if',
+            shows: true
+        },
+        computed: {
+            show2() { // он выведет console один раз, потом он закеширует данные,
+                // по этому для кнопки это использовать нельзя
+                const res = !this.shows
+                console.log(this.shows)
+                console.log(res)
+                return this.shows = res
+            }
+        },
+        methods: {
+            show() {
+                this.shows = !this.shows
+            }
+        }
+    })
+</script>
+</html>
