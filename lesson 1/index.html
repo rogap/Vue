@@ -26,6 +26,30 @@
         <div v-bind:title="titleShow" v-show="shows">
             {{ message }}
         </div>
+        <hr>
+        <input type="text" v-model="promo">
+        <!-- v-model.lazy будет срабатывать не на событии input, а на событии change -->
+        <div>
+            Your sale is {{ sale }}%
+        </div>
+        <div>
+            Your async sale (2 seconds) is {{ saleAsync }}%
+        </div>
+        <hr>
+        <button class="btn btn-primary" @click="addNumber">Add number</button>
+        <button class="btn btn-info" @click="sort">Sort</button>
+        <ul>
+            <li v-for="num in numbers">
+                {{ num }}
+            </li>
+        </ul>
+        <table class="table table-bordered">
+            <tr v-for="(value, key, i) in info" :key="key">
+                <td>{{ i }}</td>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        </table>
     </div>
     
 </body>
@@ -37,22 +61,64 @@
             titleIf: 'С помощью "v-if" мы убираем эллемент из DOM',
             titleShow: 'С помощью "v-show" мы скрываем эллемент - "display:none"',
             titleElse: 'Работает в паре с "v-if" и срабатывает как обычный else у if, обязан стоять после if',
-            shows: true
+            shows: true,
+            promo: 'some',
+            saleAsync: '0',
+            numbers: [],
+            info: {
+                name: 'Vladislav',
+                email: 'vladislav@mail.ru'
+            }
         },
-        computed: {
+        computed: { // компьютед свойства вызываются не как функция
             show2() { // он выведет console один раз, потом он закеширует данные,
                 // по этому для кнопки это использовать нельзя
                 const res = !this.shows
                 console.log(this.shows)
                 console.log(res)
                 return this.shows = res
+            },
+            sale() {
+                return getSale(this.promo)
             }
         },
         methods: {
             show() {
                 this.shows = !this.shows
+            },
+            addNumber() {
+                this.numbers.push( Math.floor(Math.random() * 10) )
+            },
+            sort() {
+                this.numbers.sort()
+            }
+        },
+        watch: {
+            promo() {
+                getSaleAsync(this.promo, (sale) => {
+                    this.saleAsync = sale
+                })
             }
         }
     })
+
+    function getSale(code) {
+        const codes = {
+            newYear: 10,
+            some: 20
+        }
+        return codes[code] || 0
+    }
+
+    function getSaleAsync(code, callback) {
+        const codes = {
+            newYear: 10,
+            some: 20
+        }
+        const sale = codes[code] || 0
+        setTimeout(() => {
+            callback(sale)
+        }, 2000)
+    }
 </script>
 </html>
