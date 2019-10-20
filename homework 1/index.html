@@ -8,33 +8,106 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-    <div class="container-fluid" style="padding-top: 20px;">
-        <div class="row justify-content-md-center">
+    <div id="form" class="container-fluid" style="padding-top: 20px;">
+        <div v-if="!formSubmited" class="row justify-content-md-center">
+            <!-- @submit.prevent="formSubmited = true" Это как можно было бы еще решить это, дописав к тегу form -->
             <form class="col-md-6">
                 <div class="form-group">
                     <label class="font-weight-bold">Email:</label>
-                    <input class="form-control" type="email" placeholder="Enter your email">
+                    <input class="form-control" type="email" placeholder="Enter your email" v-model="email">
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">First Name</label>
-                    <input class="form-control" type="text" placeholder="Your first name">
+                    <input class="form-control" type="text" placeholder="Your first name" v-model="firstName">
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Last Name</label>
-                    <input class="form-control" type="text" placeholder="Your last name">
+                    <input class="form-control" type="text" placeholder="Your last name" v-model="lastName">
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Phone</label>
-                    <input class="form-control" type="text" placeholder="Your phone number">
+                    <input class="form-control" type="text" placeholder="Your phone number" v-model="phone">
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Guests</label>
-                    <button class="btn btn-primary">+</button>
+                    <label class="font-weight-bold" style="padding-right: 10px;">Guests</label>
+                    <button class="btn btn-primary" v-on:click="addGuests">+</button>
+                </div>
+                <div class="form-group" v-for="(gue, i) in guests">
+                    <label class="font-weight-bold" 
+                           style="padding-left: 20px;"
+                    >Guests {{ i + 1 }}</label>
+                    <input class="form-control" type="text" placeholder="Enter name guests" v-model="guests[i]">
+                    <button class="btn btn-danger" @click="deletedGuests($event, i)">-</button>
                 </div>
                 <hr>
-                <button type="submit" class="btn btn-success">Send Data</button>
+                <button @click="sendData" type="submit" class="btn btn-success">Send Data</button>
             </form>
+        </div>
+        <div v-else class="row justify-content-md-center">
+            <div class="col-md-6">
+                <h2>All done!</h2>
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Email</td>
+                        <td>{{ email }}</td>
+                    </tr>
+                    <tr>
+                        <td>Full Name</td>
+                        <td>{{ fullName }}</td>
+                    </tr>
+                    <tr>
+                        <td>Phone</td>
+                        <td>{{ phone }}</td>
+                    </tr>
+                    <tr>
+                        <td>Guests</td>
+                        <td>
+                            <ul class="list-group">
+                                <li class="list-group-item" v-for="(gue, i) in guests">
+                                    {{ gue }}
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+                <button class="btn btn-danger" @click="back">Back to form</button>
+            </div>
         </div>
     </div>
 </body>
+<script>
+    const form = new Vue({
+        el: '#form',
+        data: {
+            formSubmited: false,
+            email: '',
+            firstName: '',
+            lastName: '',
+            phone: '',
+            guests: []
+        },
+        computed: {
+            fullName() {
+                return this.firstName + ' ' + this.lastName
+            }
+        },
+        methods: {
+            addGuests(e) {
+                e.preventDefault()
+                this.guests.push('')
+            },
+            deletedGuests(e, i) {
+                e.preventDefault()
+                this.guests.splice(i, 1)
+            },
+            sendData(e) {
+                e.preventDefault()
+                this.formSubmited = true
+            },
+            back() {
+                this.formSubmited = false
+            }
+        }
+    })
+</script>
 </html>
