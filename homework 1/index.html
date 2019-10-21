@@ -30,14 +30,14 @@
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold" style="padding-right: 10px;">Guests</label>
-                    <button class="btn btn-primary" v-on:click="addGuests">+</button>
+                    <button type="button" class="btn btn-primary" v-on:click="addGuests">+</button>
                 </div>
-                <div class="form-group" v-for="(gue, i) in guests">
+                <div class="form-group" v-for="(gue, key, i) in guests" :key="key">
                     <label class="font-weight-bold" 
                            style="padding-left: 20px;"
                     >Guests {{ i + 1 }}</label>
-                    <input class="form-control" type="text" placeholder="Enter name guests" v-model="guests[i]">
-                    <button class="btn btn-danger" @click="deletedGuests($event, i)">-</button>
+                    <input class="form-control" type="text" placeholder="Enter name guests" v-model="guests[key]">
+                    <button type="button" class="btn btn-danger" @click="deletedGuests($event, key)">-</button>
                 </div>
                 <hr>
                 <button @click="sendData" type="submit" class="btn btn-success">Send Data</button>
@@ -70,7 +70,7 @@
                         </td>
                     </tr>
                 </table>
-                <button class="btn btn-danger" @click="back">Back to form</button>
+                <button type="button" class="btn btn-danger" @click="back">Back to form</button>
             </div>
         </div>
     </div>
@@ -84,7 +84,8 @@
             firstName: '',
             lastName: '',
             phone: '',
-            guests: []
+            guests: {},
+            guestsIterator: 0
         },
         computed: {
             fullName() {
@@ -94,11 +95,11 @@
         methods: {
             addGuests(e) {
                 e.preventDefault()
-                this.guests.push('')
+                this.$set(this.guests, this.guestsIterator++, '')
             },
-            deletedGuests(e, i) {
+            deletedGuests(e, key) {
                 e.preventDefault()
-                this.guests.splice(i, 1)
+                this.$delete(this.guests, key)
             },
             sendData(e) {
                 e.preventDefault()
