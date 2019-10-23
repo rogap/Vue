@@ -1,0 +1,130 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <style>
+        .my-info {
+            font-style: italic;
+        }
+        .my-warning {
+            font-size: 30px;
+        }
+        .table-some {
+            background: #333;
+            color: #eee;
+        }
+        .table-some.table-hover {
+            background: #777;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div class="container">
+        <button class="btn" v-bind:class="exClass1" @click="showExample(1)">
+            <h2>Example 1</h2>
+        </button>
+        <template v-if="example1"> <!-- template при show не пашет, лучше использовать show -->
+            <div class="alert" v-bind:class="divClassName">
+                Some text
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" value="info" v-model="divClass">
+                    Info
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" value="warning" v-model="divClass">
+                    Warning
+                </label>
+            </div>
+        </template>
+        <hr>
+        <button class="btn" v-bind:class="exClass2" @click="showExample(2)">
+            <h2>Example 2:</h2>
+        </button>
+        <template v-if="example2"> <!-- template при show не пашет, лучше использовать show -->
+            <div class="form-check" v-for="(value, name) in flags">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" v-model="flags[name]">
+                    {{ name }}
+                </label>
+            </div>
+            <hr>
+            <table class="table" :class="flags">
+                <tr>
+                    <td>Title</td>
+                    <td>Some</td>
+                    <td>Nz</td>
+                </tr>
+                <tr>
+                    <td>Title</td>
+                    <td>Some</td>
+                    <td>Nz</td>
+                </tr>
+                <tr>
+                    <td>Title</td>
+                    <td>Some</td>
+                    <td>Nz</td>
+                </tr>
+            </table>
+        </template>
+        <hr>
+        <button class="btn" v-bind:class="exClass3" @click="showExample(3)">
+            <h2>Example 3:</h2>
+        </button>
+        <div v-show="example3"> <!-- template при show не пашет, лучше использовать show -->
+            <div class="alert" v-bind:style="properties">Some text...</div>
+            <hr>
+            <table class="table table-bordered">
+                <tr v-for="(value, name) in properties">
+                    <td>{{ name }}</td>
+                    <td>
+                        <input type="text" v-model="properties[name]">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+<script>
+    new Vue({
+        el: '.container',
+        //template: 'приоритетнее',
+        data: {
+            example1: false,
+            exClass1: 'btn-success',
+            example2: false,
+            exClass2: 'btn-success',
+            example3: false,
+            exClass3: 'btn-success',
+            divClass: 'info',
+            flags: {
+                'table-bordered': false,
+                'table-hover': false,
+                'table-some': false
+            },
+            properties: {
+                color: 'inherit',
+                backgroundColor: 'none' // так и не понял почему тут через "-" не пишется слово, а слитно
+            }
+        },
+        computed: { // удобен тем что кэширует
+            divClassName() {
+                return [`alert-${this.divClass}`, `my-${this.divClass}`] // вью типо шарит это распозновать
+            }
+        },
+        methods: {
+            showExample(num) {
+                const ex = `example${num}`
+                this[ex] = !this[ex]
+                this[`exClass${num}`] = this[ex] ? 'btn-danger' : 'btn-success'
+            }
+        }
+    })
+</script>
+</html>
