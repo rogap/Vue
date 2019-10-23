@@ -1,0 +1,117 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 2</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <style>
+        .icon-true {
+            color: green;
+        }
+        
+        .icon-false {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="template">
+        <div class="container-fluid" style="padding-top: 20px;">
+            <div class="justify-content-md-center" style="display: flex; padding: 10px 0px 20px 0px;">
+                <div class="progress col-md-6" style="padding-left: 0px; padding-right: 0px;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" 
+                        aria-valuemax="100" v-bind:style="status"></div>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <form class="col-md-6">
+                    <div class="form-group" v-for="(value, index) in info">
+                        <label class="font-weight-bold">
+                            {{ value.name }}
+                            <i class="fa" :class="value.class" aria-hidden="true"></i>
+                        </label>
+                        <input class="form-control"
+                               v-on:input="checkPattern(index)"
+                               v-model="value.value"
+                               type="text"
+                               v-bind:placeholder="info[index].placeholder"
+                        >
+                    </div>
+                    <button type="button" class="btn btn-primary" disabled>Send Data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function Icon() {
+        return {
+            'icon-true': false,
+            'icon-false': false,
+            'fa-check-circle': false,
+            'fa-exclamation-circle': false
+        }
+    }
+
+    function Info(name='', placeholder='', pattern=/.+/) {
+        return {
+            name,
+            placeholder,
+            pattern,
+            value: '',
+            class: new Icon()
+        }
+    }
+
+    const app = new Vue({
+        el: '#template',
+        data: {
+            info: [
+                new Info('Name', 'Your name', /^[a-z]{2,10}$/i),
+                new Info('Phone', 'Your phone', /^[0-9]{10,11}$/),
+                new Info('Email', 'Your email', /^[a-z][a-z0-9]{1,15}@[a-z]{2,10}\.[a-z]{2,5}$/i),
+                new Info('Some Field 1', 'Some text'),
+                new Info('Some Field 2', 'Some text')
+            ],
+            statusBar: [false, false, false, false, false],
+            status: {width: '0px'}
+        },
+        computed: {
+            //
+        },
+        methods: {
+            checkPattern(index) {
+                const item = this.info[index]
+                const res = item.pattern.test(item.value)
+                const func = res ? this.setSuccess : this.setFail
+                this.statusBar[index] = res
+                this.updateStatus()
+                func(item.class)
+            },
+            setSuccess(obj) {
+                obj['icon-true'] = true
+                obj['icon-false'] = false
+                obj['fa-check-circle'] = true
+                obj['fa-exclamation-circle'] = false
+            },
+            setFail(obj) {
+                obj['icon-true'] = false
+                obj['icon-false'] = true
+                obj['fa-check-circle'] = false
+                obj['fa-exclamation-circle'] = true
+            },
+            updateStatus() {
+                const bar = this.statusBar
+                const len = bar.length
+                let sum = 0
+                for (let i = 0; i < len; i++) {
+                    if ( bar[i] ) sum++
+                }
+                this.status = {width: `${sum / len * 100}%`}
+            }
+        }
+    })
+</script>
+</html>
