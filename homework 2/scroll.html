@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 2</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <style>
+        .scroll-block {
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+
+        .agree {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+                <div class="scroll-block col-md-6 alert alert-primary">
+                    Some text <br> Some text <br> Some text <br> Some text <br> Some text <br> Some text <br>
+                    Some text <br> Some text <br> Some text <br> Some text <br> Some text <br> Some text <br>
+                    Some text <br> Some text <br> Some text <br> Some text <br> Some text <br> Some text <br>
+                    Some text <br> Some text <br> Some text <br> Some text <br> Some text <br> Some text <br>
+                    Some text <br> Some text <br> Some text <br> Some text <br> Some text <br> Some text <br>
+                    Some text <br> Some text <br> Some text <br> Some text <br> Some text <br> Some text <br>
+                </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="agree col-md-6">
+                <label>
+                    I agree
+                    <input type="checkbox">
+                </label>
+                <button class="btn btn-success">Send</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const scrollBlock = document.querySelector('.scroll-block')
+    const agree = document.querySelector('.agree')
+    
+    scrollBlock.addEventListener('scroll', (e) => { // offsetHeight
+        const qwe = scrollBlock.scrollTop >= scrollBlock.scrollHeight - scrollBlock.offsetHeight - 10
+        agree.style.display = qwe ? 'block' : 'none'
+    })
+</script>
+</html>
