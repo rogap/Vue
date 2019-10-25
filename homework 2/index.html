@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -25,7 +26,7 @@
                         aria-valuemax="100" v-bind:style="status"></div>
                 </div>
             </div>
-            <div class="row justify-content-md-center">
+            <div v-if="!sended" class="row justify-content-md-center">
                 <form class="col-md-6">
                     <div class="form-group" v-for="(value, index) in info">
                         <label class="font-weight-bold">
@@ -37,10 +38,19 @@
                                v-model="value.value"
                                type="text"
                                v-bind:placeholder="info[index].placeholder"
-                        >
+                        > <!-- v-on и v-model создают 2 обработчика v-on -->
                     </div>
-                    <button type="button" class="btn btn-primary" disabled>Send Data</button>
+                    <button type="button" class="btn btn-primary" :disabled="disabled" @click="sendData">Send Data</button>
                 </form>
+            </div>
+            <div v-else class="row justify-content-md-center">
+                <table class="table col-md-6 table-bordered">
+                    <tr v-for="(value, index) in info">
+                        <td>{{ value.name }}</td>
+                        <td>{{ value.value }}</td>
+                    </tr>
+                </table>
+                <button class="btn btn-danger" @click="sendData">Back</button>
             </div>
         </div>
     </div>
@@ -48,10 +58,10 @@
 <script>
     function Icon() {
         return {
-            'icon-true': false,
-            'icon-false': false,
-            'fa-check-circle': false,
-            'fa-exclamation-circle': false
+            'icon-true': null,
+            'icon-false': null,
+            'fa-check-circle': null,
+            'fa-exclamation-circle': null
         }
     }
 
@@ -76,27 +86,36 @@
                 new Info('Some Field 2', 'Some text')
             ],
             statusBar: [false, false, false, false, false],
-            status: {width: '0px'}
+            status: {width: '0px'},
+            disabled: true,
+            sended: false
         },
         computed: {
             //
         },
         methods: {
+            sendData() {
+                this.sended = !this.sended
+            },
             checkPattern(index) {
                 const item = this.info[index]
                 const res = item.pattern.test(item.value)
                 const func = res ? this.setSuccess : this.setFail
-                this.statusBar[index] = res
-                this.updateStatus()
+                if (this.statusBar[index] != res) { // типо пародия на computed (кэширование)
+                    this.statusBar[index] = res
+                    this.updateStatus()
+                }
                 func(item.class)
             },
             setSuccess(obj) {
+                if ( obj['icon-true'] ) return // типо кэширование (именно в этой задаче так можно)
                 obj['icon-true'] = true
                 obj['icon-false'] = false
                 obj['fa-check-circle'] = true
                 obj['fa-exclamation-circle'] = false
-            },
+            }, // это 2 метода можно было бы убрать и сделать if (меньше заморочек, да и производительнее, наверное)
             setFail(obj) {
+                if ( obj['icon-true'] === false ) return // засчет null работает правильно
                 obj['icon-true'] = false
                 obj['icon-false'] = true
                 obj['fa-check-circle'] = false
@@ -109,6 +128,7 @@
                 for (let i = 0; i < len; i++) {
                     if ( bar[i] ) sum++
                 }
+                this.disabled = sum != len
                 this.status = {width: `${sum / len * 100}%`}
             }
         }
