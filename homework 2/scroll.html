@@ -42,9 +42,14 @@
     const scrollBlock = document.querySelector('.scroll-block')
     const agree = document.querySelector('.agree')
     
-    scrollBlock.addEventListener('scroll', (e) => { // offsetHeight
+    scrollBlock.addEventListener('scroll', scrollAgree)
+
+    function scrollAgree() {
         const qwe = scrollBlock.scrollTop >= scrollBlock.scrollHeight - scrollBlock.offsetHeight - 10
-        agree.style.display = qwe ? 'block' : 'none'
-    })
+        if (qwe) {
+            agree.style.display = "block"
+            scrollBlock.removeEventListener('scroll', scrollAgree)
+        }
+    }
 </script>
 </html>
