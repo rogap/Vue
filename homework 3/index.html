@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 3</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div class="sample">
+        <div v-timer:1000.5>1</div>
+        <div v-timer:1000.5.run>2</div>
+        <div v-timer:1000>3</div>
+    </div>
+</body>
+<script>
+    Vue.directive('timer', {
+        bind(el, options) {
+            let size = 20
+            el.style.fontSize = size + 'px'
+
+            let timeout = +options.arg
+            let count = Infinity
+
+            for (let name in options.modifiers) {
+                if ( !isNaN(+name) ) count = +name
+            }
+
+            if (options.modifiers.run) run()
+
+            const timerFunc = () => {
+                run()
+                if (count-- <= 0) clearInterval(timer, timerFunc)
+            }
+            const timer = setInterval(timerFunc, timeout)
+
+            function run() {
+                el.style.fontSize = size + 'px'
+                size += 5
+            }
+        }
+    })
+
+    new Vue({
+        el: '.sample'
+    })
+</script>
+</html>

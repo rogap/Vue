@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 3</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Clicks: {{ clicks }}</h2>
+        <hr>
+        <button class="btn btn-success" @click="onClick">Send</button>
+        <button class="btn btn-success" v-ondelay:click.prevent.trim.1000="onClick">Delay</button>
+        <app-some v-for="(elem, index) in values" :key="index"
+                  v-bind:min="elem.min"
+                  :max="elem.max"
+                  @plusplus="onPlusPlus(index)"
+        >
+        </app-some>
+    </div>
+</body>
+<script>
+    Vue.component('app-some', {
+        props: ["min", "max"], // разрешенные атрибуты
+        // props: { // правильней так
+        //     min: Number, // только числом может быть
+        //     max: Number
+        // },
+        template: `
+            <div>
+                <h2>{{ number }}</h2>
+                <button class="btn btn-primary" @click="onClick2">+</button>
+                <hr>
+            </div>
+        `,
+        data() { // генерируется 1 раз
+            return {
+                //a: Math.floor( Math.random() * (this.max - this.min)) + this.min
+            }
+        },
+        computed: {
+            number() {
+                return Math.floor( Math.random() * (this.max - this.min)) + this.min
+            }
+        },
+        methods: {
+            onClick2(e) {
+                this.$emit('plusplus')
+            }
+        }
+    })
+
+    Vue.directive('ondelay', {
+        bind(el, options) {
+            let timer
+            let timeout = 0 // находим число 1000 в модивикаторах (оно может быть разным)
+            for (let name in options.modifiers) {
+                if ( parseInt(name) ) timeout = +name
+            }
+
+            const callback = (e) => {
+                if (timer !== undefined) clearTimeout(timer) // завершаем прошлые запуски и запускаем новый
+                if (options.modifiers.prevent) e.preventDefault()
+
+                timer = setTimeout(() => {
+                    options.value.call(this, e)
+                }, timeout)
+            }
+            console.log(el, options)
+            el.addEventListener(options.arg, callback)
+        }
+    })
+
+    new Vue({
+        el: '.container',
+        data: {
+            clicks: 0,
+            values: [
+                {
+                    min: 1,
+                    max: 5
+                },
+                {
+                    min: 5,
+                    max: 10
+                },
+                {
+                    min: 10,
+                    max: 15
+                }
+            ]
+        },
+        methods: {
+            onClick() {
+                this.clicks++
+            },
+            onPlusPlus(index) { // this.$set не нужен, так как созданные обьекты уже реактивны
+                this.values[index].min += 5
+                this.values[index].max += 5
+            }
+        }
+    })
+</script>
+</html>
